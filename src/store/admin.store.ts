@@ -45,10 +45,9 @@ export const useAdminAuthStore = create<IAdminAuthStore>()(
                 setLoading(true);
 
                 try {
-                    // const { token } = await API.post('/auth/login', { email: data.email, password: data.password }).then(res => res.data);
-                    // localStorage.setItem('adminToken', token);
-                    localStorage.setItem('adminToken', "admin");
+                    const { token } = await API.post('/auth/login', { email: data.email, password: data.password }).then(res => res.data);
 
+                    localStorage.setItem('adminToken', token);
                     await auth();
                 } catch (e) {
                     if (e instanceof Error) {
@@ -64,8 +63,8 @@ export const useAdminAuthStore = create<IAdminAuthStore>()(
                 setLoading(true);
 
                 try {
-                    // const user = await API.get('/auth/me').then(res => res.data);
-                    setUser({ _id: '1' });
+                    const user = await API.get('/auth/me').then(res => res.data);
+                    setUser(user);
                 } catch {
                     setUser(null);
                 } finally {
