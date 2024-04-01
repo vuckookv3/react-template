@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Routes } from '@generouted/react-router/lazy';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+import { routes } from '@generouted/react-router/lazy';
+
+const Routes = () => <RouterProvider router={createBrowserRouter(routes, { basename: '/admin' })} />;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>

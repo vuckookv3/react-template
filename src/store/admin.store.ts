@@ -1,8 +1,10 @@
+import { API } from '@/utils/API.axios';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type AdminUser = {
+type Admin = {
     _id: string;
+    role?: string;
 }
 
 type AdminLoginForm = {
@@ -12,8 +14,8 @@ type AdminLoginForm = {
 
 interface IAdminAuthStore {
     loading: boolean;
-    user: null | AdminUser;
-    setUser: (user: AdminUser | null) => void;
+    user: null | Admin;
+    setUser: (user: Admin | null) => void;
     setLoading: (loading: boolean) => void;
     login: (form: AdminLoginForm) => Promise<void>;
     auth: () => Promise<void>;
@@ -37,16 +39,16 @@ export const useAdminAuthStore = create<IAdminAuthStore>()(
                 set({ loading }, false);
             },
 
-            async login(form) {
+            async login(data: AdminLoginForm) {
                 const { setLoading, auth } = get();
 
                 setLoading(true);
 
                 try {
-                    // const { token } = await login(form);
+                    // const { token } = await API.post('/auth/login', { email: data.email, password: data.password }).then(res => res.data);
+                    // localStorage.setItem('adminToken', token);
+                    localStorage.setItem('adminToken', "admin");
 
-                    // localStorage.setItem('token', token);
-                    console.log('login');
                     await auth();
                 } catch (e) {
                     if (e instanceof Error) {
@@ -62,10 +64,7 @@ export const useAdminAuthStore = create<IAdminAuthStore>()(
                 setLoading(true);
 
                 try {
-                    // const user = await identify();
-
-                    // setUser(user);
-                    console.log('auth');
+                    // const user = await API.get('/auth/me').then(res => res.data);
                     setUser({ _id: '1' });
                 } catch {
                     setUser(null);

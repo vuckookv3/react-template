@@ -1,17 +1,18 @@
 import { useNavigate } from '@/router';
-import { useAdminAuthStore } from '@/store/adminUser.store';
+import { useAdminAuthStore } from '@/store/admin.store';
 import { Button, Container, Paper, PasswordInput, TextInput, Title } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { z } from 'zod';
 
 const schema = z.object({
 	email: z.string().email(),
-	password: z.string().min(6),
+	password: z.string().min(1),
 });
 
 export default function AdminLogin() {
-	const login = useAdminAuthStore((state) => state.login);
-    const navigate = useNavigate();
+	const userStore = useAdminAuthStore();
+	const navigate = useNavigate();
 
 	const form = useForm({
 		validate: zodResolver(schema),
@@ -22,12 +23,12 @@ export default function AdminLogin() {
 	});
 
 	const onSubmit = form.onSubmit(async (data) => {
-		console.log(data);
 		try {
-			await login(data);
-            navigate('/admin/dashboard');
+			await userStore.login(data);
+			navigate('/dashboard');
 		} catch (err) {
 			console.error(err);
+			notifications.show({ title: 'Error', message: 'Bad credentials', color: 'red' });
 		}
 	});
 
@@ -38,7 +39,7 @@ export default function AdminLogin() {
 				<Paper withBorder shadow="md" p={30} mt={30} radius="md">
 					<TextInput label="Email" placeholder="you@mantine.dev" required {...form.getInputProps('email')} />
 					<PasswordInput label="Password" placeholder="Your password" required mt="md" {...form.getInputProps('password')} />
-					<Button type="submit" fullWidth mt="xl">
+					<Button type="submit" disabled={userStore.loading} loading={userStore.loading} fullWidth mt="xl">
 						Sign in
 					</Button>
 				</Paper>
